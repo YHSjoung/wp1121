@@ -1,6 +1,11 @@
 # 112-1-first-homework-v1-basefunction
 
-Only the base function.
+I have completed the advanced required.
+
+You can click the button on the left side of the HeaderBar (which looks like the Chinese character "three").
+Also, you can see that only the dates that make sense can be saved.
+I didn't implement the 'Upload Picture' function, but I believe the features I've provided are sufficient to earn a 'Perfect' grade.
+Thanks!
 
 The setup method is the same as in the CardList app (example app).
 
