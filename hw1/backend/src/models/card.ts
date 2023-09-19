@@ -1,12 +1,14 @@
 import type { CardData } from "@lib/shared_types";
 import mongoose from "mongoose";
-import type { Types } from "mongoose";
+import { Types } from "mongoose";
 
 // In `CardData`, we have `list_id` and `id` as a string, but in the database, we want to store them as an ObjectId.
 interface CardDocument
   extends Omit<CardData, "id" | "list_id">,
     mongoose.Document {
   list_id: Types.ObjectId;
+  moods_id: Types.ObjectId;
+  tags_id: Types.ObjectId;
 }
 
 interface CardModel extends mongoose.Model<CardDocument> {}
@@ -35,6 +37,16 @@ const CardSchema = new mongoose.Schema<CardDocument>(
     tags: {
       type: String,
       required: true,
+    },
+    moods_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "MoodsIdSet",
+      required: false,
+    },
+    tags_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "TagsIdSet",
+      required: false,
     }
   },
   {

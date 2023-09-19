@@ -27,7 +27,6 @@ type EditCardDialogProps = {
   variant: "edit";
   open: boolean;
   onClose: () => void;
-  // listId: string;
   cardId: string;
   title: string;
   description: string;
@@ -36,6 +35,9 @@ type EditCardDialogProps = {
 };
 
 type CardDialogProps = NewCardDialogProps | EditCardDialogProps;
+
+export const moodsset = ["happy", "angry", "sad"];
+export const tagsset = ["club", "studies", "interpersonal"];
 
 export default function CardDialog(props: CardDialogProps) {
   const { variant, open, onClose} = props;
@@ -47,8 +49,7 @@ export default function CardDialog(props: CardDialogProps) {
   const [edittingTitle, setEdittingTitle] = useState(variant === "new");
   const [edittingDescription, setEdittingDescription] = useState(variant === "new");
   
-  const moodsset = ["happy", "angry", "sad"]
-  const tagsset = ["club", "studies", "interpersonal"]
+
   // using a state variable to store the value of the input, and update it on change is another way to get the value of a input
   // however, this method is not recommended for large forms, as it will cause a re-render on every change
   // you can read more about it here: https://react.dev/reference/react-dom/components/input#controlling-an-input-with-a-state-variable
@@ -87,7 +88,6 @@ export default function CardDialog(props: CardDialogProps) {
   const { fetchCards } = useCards();
 
   const handleClose = () => {
- 
     onClose();
     if (variant === "edit") {
       setNewTitle(title);
@@ -105,7 +105,6 @@ export default function CardDialog(props: CardDialogProps) {
           description: newDescription,
           moods: newMoods,
           tags: newTags,
-          // list_id: listId,
         });
       } else {
         if (

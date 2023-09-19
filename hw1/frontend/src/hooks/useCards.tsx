@@ -2,7 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
-  // useMemo,
+  useMemo,
   useState,
 } from "react";
 
@@ -10,14 +10,22 @@ import type { GetCardsResponse } from "@lib/shared_types";
 
 import { getCards } from "@/utils/client";
 import type { CardProps } from "@/components/Card";
+import { moodsset } from "@/components/CardDialog";
+import {tagsset} from "@/components/CardDialog";
 
 type CardContextType = {
   rawCards: CardProps[];
+  moodsSets: Record<string, CardMoodTagsListProps>;
+  tagsSets: Record<string, CardMoodTagsListProps>;
   fetchCards: () => Promise<void>;
 };
-
+type CardMoodTagsListProps = {
+  cards: CardProps[];
+};
 const CardContext = createContext<CardContextType>({
   rawCards: [],
+  moodsSets: {},
+  tagsSets: {},
   fetchCards: async () => {},
 });
 
@@ -30,7 +38,6 @@ type CardProviderProps = {
 export function CardProvider({ children }: CardProviderProps) {
   const [rawCards, setRawCards] = useState<GetCardsResponse>([]);
 
-
   const fetchCards = useCallback(async () => {
     try {
       const { data } = await getCards();
@@ -40,10 +47,43 @@ export function CardProvider({ children }: CardProviderProps) {
     }
   }, []);
 
+  const moodsSets = useMemo(() => {
+    const moodsMap = moodsset.reduce(
+      (acc, mood) => {
+        acc[mood] = {cards:[]};
+        return acc;
+      },
+      {} as Record<string, CardMoodTagsListProps>,
+    );
+
+    for (const card of rawCards) {
+      moodsMap[card.moods].cards.push({...card});
+    }
+    // return Object.values(moodsMap);
+    return moodsMap;
+  },[rawCards]);
+
+  const tagsSets = useMemo(() => {
+    const tagsMap = tagsset.reduce(
+      (acc, tag) => {
+        acc[tag] = {cards:[]};
+        return acc;
+      },
+      {} as Record<string, CardMoodTagsListProps>,
+    );
+    for (const card of rawCards) {
+      tagsMap[card.tags].cards.push({...card});
+    }
+    // return Object.values(tagsMap);
+    return tagsMap;
+  },[rawCards]);
+
   return (
     <CardContext.Provider
       value={{
         rawCards,
+        moodsSets,
+        tagsSets,
         fetchCards,
       }}
     >

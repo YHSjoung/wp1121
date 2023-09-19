@@ -4,7 +4,6 @@ export type CardData = {
   description: string;
   moods: string;
   tags: string;
-  // list_id: string;
 };
 
 export type ListData = {

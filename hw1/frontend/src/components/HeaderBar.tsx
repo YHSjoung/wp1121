@@ -11,10 +11,11 @@ import { Button} from "@mui/material";
 
 
 import CardDialog from "@/components/CardDialog";
+import FilterDialog from "./FilterDialog";
 
 export default function HeaderBar() {
   const [openNewCardDialog, setOpenNewCardDialog] = useState(false);
-
+  const [openFilterDialog, setOpenFilterDialog] = useState(false);
   return (
     <AppBar position="static">
       <Toolbar>
@@ -24,6 +25,7 @@ export default function HeaderBar() {
           color="inherit"
           aria-label="menu"
           sx={{ mr: 2 }}
+          onClick={() => setOpenFilterDialog(true)}
         >
           <MenuIcon />
         </IconButton>
@@ -42,6 +44,10 @@ export default function HeaderBar() {
           open={openNewCardDialog}
           onClose={() => setOpenNewCardDialog(false)}
         />
+          <FilterDialog
+            open={openFilterDialog}
+            onClose={() => setOpenFilterDialog(false)}
+          />
       </Toolbar>
     </AppBar>
     

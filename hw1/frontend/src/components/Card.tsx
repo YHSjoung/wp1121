@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import { Paper } from "@mui/material";
 
-// import CardDialog from "./CardDialog";
 import CardView from "./CardView";
 // import { Tag } from "@mui/icons-material";
 import Chip from "@mui/material/Chip";
