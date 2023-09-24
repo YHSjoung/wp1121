@@ -11,7 +11,7 @@ The setup method is the same as in the CardList app (example app).
 
 ## Notice
 
-I recommend creating a new cluster for this app. This means you'll need a new API; please don't use the old one, as some of the original data in your MongoDB might not support the functionality.
+I recommend creating a new cluster for this app. Consequently, you'll need a new API. I advise against using the old one because some of the original data in your MongoDB might not be compatible with the desired functionality. Given that MongoDB Atlas provides only one free cluster per user, you have two options. First, you can clear all data from your existing cluster, which is my preferred recommendation. Alternatively, you can delete your current cluster in MongoDB Atlas, necessitating a new API registration. Either approach should allow this app to run successfully.
 
 ## Run the app
 
