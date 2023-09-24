@@ -24,12 +24,6 @@ const CardSchema = new mongoose.Schema<CardDocument>(
       type: String,
       required: true,
     },
-    list_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "List",
-      // required: true,
-      required: false,
-    },
     moods: {
       type: String,
       required: true,
@@ -38,16 +32,6 @@ const CardSchema = new mongoose.Schema<CardDocument>(
       type: String,
       required: true,
     },
-    moods_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "MoodsIdSet",
-      required: false,
-    },
-    tags_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "TagsIdSet",
-      required: false,
-    }
   },
   {
     timestamps: true,

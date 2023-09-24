@@ -57,7 +57,9 @@ export function CardProvider({ children }: CardProviderProps) {
     );
 
     for (const card of rawCards) {
-      moodsMap[card.moods].cards.push({...card});
+      if (card.moods) { // 檢查 card.moods 是否存在
+        moodsMap[card.moods].cards.push({...card});
+      }
     }
     // return Object.values(moodsMap);
     return moodsMap;
@@ -72,7 +74,10 @@ export function CardProvider({ children }: CardProviderProps) {
       {} as Record<string, CardMoodTagsListProps>,
     );
     for (const card of rawCards) {
-      tagsMap[card.tags].cards.push({...card});
+      if (card.tags) {
+        tagsMap[card.tags].cards.push({...card});
+      }
+  
     }
     // return Object.values(tagsMap);
     return tagsMap;
