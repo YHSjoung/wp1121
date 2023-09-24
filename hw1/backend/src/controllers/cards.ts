@@ -1,7 +1,6 @@
 // Get cards
 // Path: backend/src/controllers/cards.ts
 import CardModel from "../models/card";
-import ListModel from "../models/list";
 import { genericErrorHandler } from "../utils/errors";
 import type {
   CreateCardPayload,
@@ -66,8 +65,7 @@ export const createCard = async (
 ) => {
   try {
     // const { title, description, list_id } = req.body;
-    const { title, description, moods, tags} = req.body;
-
+    const { title, description, moods, tags } = req.body;
 
     // Check if the list exists
     // const list = await ListModel.findById(list_id);

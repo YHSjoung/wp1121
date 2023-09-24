@@ -1,10 +1,10 @@
 import { useState } from "react";
 
 import { Paper } from "@mui/material";
-
-import CardView from "./CardView";
 // import { Tag } from "@mui/icons-material";
 import Chip from "@mui/material/Chip";
+
+import CardView from "./CardView";
 
 export type CardProps = {
   id: string;
@@ -15,9 +15,15 @@ export type CardProps = {
   // listId: string;
 };
 
-// export 
+// export
 
-export default function Card({ id, title, description, moods, tags }: CardProps) {
+export default function Card({
+  id,
+  title,
+  description,
+  moods,
+  tags,
+}: CardProps) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -27,11 +33,16 @@ export default function Card({ id, title, description, moods, tags }: CardProps)
   return (
     <>
       <button onClick={handleClickOpen} className="text-start">
-        <Paper className="my-auto flex w-full flex-col p-6 justify-around" elevation={6}>
-          <Paper className="justify-around p-3 justify-around">{title}</Paper>
-          <div style={{ display: 'flex', gap: '10px', margin: "10px 0 10px 0" }}>
-            <Chip label={moods} color="primary" style={{fontSize: "15px"}} />
-            <Chip label={tags} color="success" style={{fontSize: "15px"}}/>
+        <Paper
+          className="my-auto flex w-full flex-col justify-around p-6"
+          elevation={6}
+        >
+          <Paper className="justify-around justify-around p-3">{title}</Paper>
+          <div
+            style={{ display: "flex", gap: "10px", margin: "10px 0 10px 0" }}
+          >
+            <Chip label={moods} color="primary" style={{ fontSize: "15px" }} />
+            <Chip label={tags} color="success" style={{ fontSize: "15px" }} />
           </div>
         </Paper>
       </button>

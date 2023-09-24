@@ -40,15 +40,16 @@ export const moodsset = ["happy", "angry", "sad"];
 export const tagsset = ["club", "studies", "interpersonal"];
 
 export default function CardDialog(props: CardDialogProps) {
-  const { variant, open, onClose} = props;
+  const { variant, open, onClose } = props;
   const title = variant === "edit" ? props.title : "";
   const description = variant === "edit" ? props.description : "";
   const moods = variant === "edit" ? props.moods : "";
   const tags = variant === "edit" ? props.tags : "";
 
   const [edittingTitle, setEdittingTitle] = useState(variant === "new");
-  const [edittingDescription, setEdittingDescription] = useState(variant === "new");
-  
+  const [edittingDescription, setEdittingDescription] = useState(
+    variant === "new",
+  );
 
   // using a state variable to store the value of the input, and update it on change is another way to get the value of a input
   // however, this method is not recommended for large forms, as it will cause a re-render on every change
@@ -58,7 +59,6 @@ export default function CardDialog(props: CardDialogProps) {
   const [newMoods, setNewMoods] = useState(moods);
   const [newTags, setNewTags] = useState(tags);
 
-
   useEffect(() => {
     if (open) {
       setNewDescription(description);
@@ -66,21 +66,21 @@ export default function CardDialog(props: CardDialogProps) {
       setNewMoods(moods);
       setNewTags(tags);
     }
-  }, [open])
+  }, [open]);
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const initialDateString = e.target.value;
     // console.log(initialDateString);
-    const datepart = initialDateString.replace("-",".").replace("-",".");
-    const datework = datepart.split(".")
+    const datepart = initialDateString.replace("-", ".").replace("-", ".");
+    const datework = datepart.split(".");
     const years = parseInt(datework[0]);
     const months = parseInt(datework[1]);
     const days = parseInt(datework[2]);
-    const date = new Date(years, months-1, days);
-    const weekday = date.toLocaleDateString("zh-TW", {weekday:'narrow'});
+    const date = new Date(years, months - 1, days);
+    const weekday = date.toLocaleDateString("zh-TW", { weekday: "narrow" });
     const dateoutput = datepart + " (" + weekday + ")";
     setNewTitle(dateoutput);
-  }
+  };
 
   // const [newListId, setNewListId] = useState(listId);
 
@@ -111,7 +111,7 @@ export default function CardDialog(props: CardDialogProps) {
           newTitle === title &&
           newDescription === description &&
           newMoods === moods &&
-          newTags === tags 
+          newTags === tags
         ) {
           return;
         }
@@ -119,7 +119,7 @@ export default function CardDialog(props: CardDialogProps) {
           title: newTitle,
           description: newDescription,
           moods: newMoods,
-          tags: newTags
+          tags: newTags,
         });
       }
       fetchCards();
@@ -177,7 +177,9 @@ export default function CardDialog(props: CardDialogProps) {
           displayEmpty
           color="primary"
         >
-          <MenuItem value="" disabled>Select your mood</MenuItem>
+          <MenuItem value="" disabled>
+            Select your mood
+          </MenuItem>
           {moodsset.map((mood) => (
             <MenuItem key={mood} value={mood}>
               {mood}
@@ -189,14 +191,16 @@ export default function CardDialog(props: CardDialogProps) {
           onChange={(e) => setNewTags(e.target.value)}
           displayEmpty
           color="success"
-          >
-            <MenuItem value="" disabled>Select your tags</MenuItem>
-            {tagsset.map((tag) => (
-              <MenuItem key={tag} value={tag}>
-                {tag}
-              </MenuItem>
-            ))}
-          </Select>
+        >
+          <MenuItem value="" disabled>
+            Select your tags
+          </MenuItem>
+          {tagsset.map((tag) => (
+            <MenuItem key={tag} value={tag}>
+              {tag}
+            </MenuItem>
+          ))}
+        </Select>
         {variant === "edit" && (
           <IconButton color="error" onClick={handleDelete}>
             <DeleteIcon />
