@@ -9,6 +9,10 @@ Thanks!
 
 The setup method is the same as in the CardList app (example app).
 
+## Notice
+
+I recommend creating a new cluster for this app. This means you'll need a new API; please don't use the old one, as some of the original data in your MongoDB might not support the functionality.
+
 ## Run the app
 
 ### 1. setup backend `.env`
