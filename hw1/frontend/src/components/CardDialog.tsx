@@ -82,9 +82,7 @@ export default function CardDialog(props: CardDialogProps) {
     setNewTitle(dateoutput);
   };
 
-  // const [newListId, setNewListId] = useState(listId);
 
-  // const { lists, fetchCards } = useCards();
   const { fetchCards } = useCards();
 
   const handleClose = () => {

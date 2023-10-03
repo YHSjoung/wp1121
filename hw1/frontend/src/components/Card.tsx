@@ -12,7 +12,6 @@ export type CardProps = {
   description: string;
   moods: string;
   tags: string;
-  // listId: string;
 };
 
 // export
