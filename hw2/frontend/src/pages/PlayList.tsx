@@ -179,67 +179,69 @@ function Playlist() {
                 className="rounded"
               />
             </div>
-            <div className="flex flex-col">
-              {edittingName ? (
-                <ClickAwayListener onClickAway={handleUpdateList}>
-                  <Input
-                    autoFocus
-                    defaultValue={playList.name}
-                    className="grow"
-                    placeholder="Enter a new name for this list..."
-                    sx={{ fontSize: "2rem" }}
-                    inputRef={nameInputRef}
-                  />
-                </ClickAwayListener>
-              ) : (
-                <button
-                  onClick={() => setEdittingName(true)}
-                  className=" rounded-md pb-2 pl-1 pr-2 pt-2 hover:bg-white/10"
-                >
-                  <Typography className="text-start" variant="h4">
-                    {playList.name}
-                  </Typography>
-                </button>
-              )}
-              {edittingDescription ? (
-                <ClickAwayListener onClickAway={handleUpdateList}>
-                  <Input
-                    autoFocus
-                    defaultValue={playList.description}
-                    className="grow"
-                    placeholder="Enter a new description for this list..."
-                    sx={{ fontSize: "2rem" }}
-                    inputRef={descriptionInputRef}
-                  />
-                </ClickAwayListener>
-              ) : (
-                <button
-                  onClick={() => setEdittingDescription(true)}
-                  className="w-full rounded-md p-2 hover:bg-white/10"
-                >
-                  <Typography className="text-start" variant="h6">
-                    {playList.description}
-                  </Typography>
-                </button>
-              )}
-            </div>
           </div>
-          <div className="flex w-full items-end justify-end gap-5">
-            <Button
-              variant="contained"
-              onClick={() => setOpenNewCardDialog(true)}
-            >
-              Add
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => setOpenDeleteDialog(true)}
-            >
-              Delete
-            </Button>
-            <Link to={"/"}>
-              <Button variant="contained">Home</Button>
-            </Link>
+          <div className="flex flex-col justify-between w-full">
+            <div className="flex flex-col">
+                {edittingName ? (
+                  <ClickAwayListener onClickAway={handleUpdateList}>
+                    <Input
+                      autoFocus
+                      defaultValue={playList.name}
+                      className="grow"
+                      placeholder="Enter a new name for this list..."
+                      sx={{ fontSize: "2rem" }}
+                      inputRef={nameInputRef}
+                    />
+                  </ClickAwayListener>
+                ) : (
+                  <button
+                    onClick={() => setEdittingName(true)}
+                    className=" rounded-md pb-2 pl-1 pr-2 pt-2 hover:bg-white/10"
+                  >
+                    <Typography className="text-start" variant="h4">
+                      {playList.name}
+                    </Typography>
+                  </button>
+                )}
+                {edittingDescription ? (
+                  <ClickAwayListener onClickAway={handleUpdateList}>
+                    <Input
+                      autoFocus
+                      defaultValue={playList.description}
+                      className="grow"
+                      placeholder="Enter a new description for this list..."
+                      sx={{ fontSize: "2rem" }}
+                      inputRef={descriptionInputRef}
+                    />
+                  </ClickAwayListener>
+                ) : (
+                  <button
+                    onClick={() => setEdittingDescription(true)}
+                    className="w-full rounded-md p-2 hover:bg-white/10"
+                  >
+                    <Typography className="text-start" variant="h6">
+                      {playList.description}
+                    </Typography>
+                  </button>
+                )}
+              </div>
+              <div className="flex w-full items-end justify-end gap-5">
+                <Button
+                  variant="contained"
+                  onClick={() => setOpenNewCardDialog(true)}
+                >
+                  Add
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => setOpenDeleteDialog(true)}
+                >
+                  Delete
+                </Button>
+                <Link to={"/"}>
+                  <Button variant="contained">Home</Button>
+                </Link>
+              </div>
           </div>
         </div>
         <main className="flex w-full flex-col gap-4">
