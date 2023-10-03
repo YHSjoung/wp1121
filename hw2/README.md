@@ -1,6 +1,6 @@
 # 112-1 Hw2 WP Music
 
-I have done the basic required for this app. You can set up the app by the following steps.Please notice that you have to delete all of your data in your MongoDB in order to prevent the format error!
+I have done the basic required for this app. You can set up the app by the following steps. Please notice that you have to delete all of your data in your MongoDB in order to prevent the format error!
 
 ## Run the app
 
