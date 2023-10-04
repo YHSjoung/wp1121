@@ -21,6 +21,13 @@ function Home() {
   const [newListDialogOpen, setNewListDialogOpen] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
+  const [listNameList, setListNameList] = useState<string[]>([]);
+
+  useEffect(() => {
+    const listName2Update = lists.map((list) => list.name);
+    setListNameList(listName2Update);
+  }, [lists]);
+
   useEffect(() => {
     fetchLists();
     fetchCards();
@@ -67,6 +74,7 @@ function Home() {
             <NewListDialog
               open={newListDialogOpen}
               onClose={() => setNewListDialogOpen(false)}
+              listNameList={listNameList}
             />
           </div>
         </div>

@@ -1,6 +1,14 @@
 # 112-1 Hw2 WP Music
 
-I have done the basic required for this app. You can set up the app by the following steps. Please notice that you have to delete all of your data in your MongoDB in order to prevent the format error!
+I have implemented three of the "perfect" requirements for this app.
+
+First, a warning will pop up if you fail to update the list or card. If you forget to enter the "Name" of a list or leave it blank, a message will appear saying, "Please enter the list name." The same goes for the card.
+
+Second, the app checks whether a list or card with the same name already exists when you add a new one. If you use a duplicate name, a warning will pop up.
+
+Third, you can also change the cover image of each music list. This was the most challenging part of the homework for me, and I suggest you try it at least once!
+
+To set up the app, please follow the steps below. Note that you must delete all of your data in your MongoDB to prevent any format errors! Have a great day!
 
 ## Run the app
 
@@ -18,6 +26,15 @@ Then, fill in the `MONGO_URI` field in `.env` with your MongoDB connection strin
 ```bash
 PORT=8000
 MONGO_URI="mongodb+srv://<username>:<password>@<cluster>.example.mongodb.net/?retryWrites=true&w=majority"
+```
+
+### 2. setup backend picture folder
+
+Start by copying the `storePic.example` folder to `storePic`
+
+```bash
+cd backend
+cp storePic.example storePic
 ```
 
 ### 2. setup frontend `.env`

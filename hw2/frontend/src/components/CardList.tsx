@@ -30,9 +30,10 @@ export default function CardList({ id, name, cards, picture }: CardListProps) {
   const handleDelete = async () => {
     try {
       await deleteList(id);
-      fetchLists();
     } catch (error) {
       alert("Error: Failed to delete list");
+    } finally {
+      fetchLists();
     }
   };
 
@@ -42,7 +43,7 @@ export default function CardList({ id, name, cards, picture }: CardListProps) {
         <div className="-m-8 grid justify-end">
           <IconButton
             color="error"
-            onClick={handleDelete}
+            onClick={() => handleDelete()}
             className={`${showDelete ? "" : "pointer-events-none opacity-0"}`}
           >
             <CloseIcon />

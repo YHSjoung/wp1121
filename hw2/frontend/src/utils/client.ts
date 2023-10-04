@@ -12,6 +12,7 @@ import type {
   DeleteListResponse,
   UpdateListPayload,
   UpdateListResponse,
+  StorePicResponse,
 } from "@lib/shared_types";
 import axios from "axios";
 
@@ -55,4 +56,10 @@ export function deleteCard(Ids: string[]) {
 
 export function deleteList(id: string) {
   return client.delete<DeleteListResponse>(`/lists/${id}`);
+}
+
+export function storePicture(data: FormData) {
+  return client.post<StorePicResponse>("lists/storePic", data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 }

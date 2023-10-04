@@ -75,7 +75,23 @@ export default function CardDialog(props: CardDialogProps) {
 
   const handleSave = async () => {
     try {
+      const list4UpdateSong = lists.find((list) => list.id === newListId);
+      const songNameList = list4UpdateSong?.cards.map((card) => card.title);
+      if (songNameList?.includes(newTitle)) {
+        throw new Error("There is already have the same song");
+      }
       if (variant === "new") {
+        if (!newTitle) {
+          throw new Error("Please enter the song name");
+        } else {
+          if (!newDescription) {
+            throw new Error("Please enter the singer");
+          } else {
+            if (!newLink) {
+              throw new Error("Please enter the link");
+            }
+          }
+        }
         await createCard({
           title: newTitle,
           description: newDescription,
@@ -83,6 +99,17 @@ export default function CardDialog(props: CardDialogProps) {
           link: newLink,
         });
       } else {
+        if (!newTitle) {
+          throw new Error("Please enter the song name");
+        } else {
+          if (!newDescription) {
+            throw new Error("Please enter the singer");
+          } else {
+            if (!newLink) {
+              throw new Error("Please enter the link");
+            }
+          }
+        }
         if (
           newTitle === title &&
           newDescription === description &&
@@ -118,7 +145,11 @@ export default function CardDialog(props: CardDialogProps) {
       }
       fetchCards();
     } catch (error) {
-      alert("Error: Failed to save card");
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Error: Failed to save card");
+      }
     } finally {
       handleClose();
     }

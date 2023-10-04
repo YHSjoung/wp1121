@@ -4,6 +4,7 @@ import {
   getList,
   updateList,
   deleteList,
+  storePicture,
 } from "../controllers/lists";
 import express from "express";
 
@@ -19,6 +20,7 @@ router.post("/", createList);
 router.put("/:id", updateList);
 // DELETE /api/lists/:id
 router.delete("/:id", deleteList);
-
+// Store Picrute /api/lists/storePic
+router.post("/storePic", storePicture);
 // export the router
 export default router;

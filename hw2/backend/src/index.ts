@@ -2,6 +2,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
+import path from "path";
 
 import CardRoutes from "./routes/cards";
 import ListRoutes from "./routes/lists";
@@ -11,6 +12,9 @@ import { env } from "./utils/env";
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
+
+// set storePic static
+app.use("/storePic", express.static(path.join(__dirname, "../storePic")));
 
 // Routes
 app.use("/api/cards", CardRoutes);

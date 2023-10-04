@@ -51,8 +51,10 @@ export type CreateListPayload = Omit<ListData, "id" | "cards">;
 
 export type CreateListResponse = Pick<ListData, "id">;
 
-export type UpdateListPayload = Partial<Omit<ListData, "id" | "cards">>;
+export type UpdateListPayload = Omit<ListData, "id" | "cards">;
 
 export type UpdateListResponse = "OK";
 
 export type DeleteListResponse = "OK";
+
+export type StorePicResponse = { imageUrl: string; };

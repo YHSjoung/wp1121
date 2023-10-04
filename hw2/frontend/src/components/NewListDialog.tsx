@@ -13,9 +13,14 @@ import { createList } from "@/utils/client";
 type NewListDialogProps = {
   open: boolean;
   onClose: () => void;
+  listNameList: string[];
 };
 
-export default function NewListDialog({ open, onClose }: NewListDialogProps) {
+export default function NewListDialog({
+  open,
+  onClose,
+  listNameList,
+}: NewListDialogProps) {
   // using a ref to get the dom element is one way to get the value of a input
   // another way is to use a state variable and update it on change, which can be found in CardDialog.tsx
   const titleFieldRef = useRef<HTMLInputElement>(null);
@@ -25,14 +30,31 @@ export default function NewListDialog({ open, onClose }: NewListDialogProps) {
 
   const handleAddList = async () => {
     try {
-      await createList({
-        name: titleFieldRef.current?.value ?? "",
-        picture: "../../pd.png",
-        description: descriptionFieldRef.current?.value ?? "",
-      });
-      fetchLists();
+      const updateName = titleFieldRef.current?.value ?? "";
+      const updateDescription = descriptionFieldRef.current?.value ?? "";
+      if (!updateName) {
+        throw new Error("Please enter the list name");
+      } else {
+        if (!updateDescription) {
+          throw new Error("Please enter the list description");
+        } else {
+          if (listNameList.includes(updateName)) {
+            throw new Error("There is already has the same list");
+          }
+          await createList({
+            name: titleFieldRef.current?.value ?? "",
+            picture: "../../pd.png",
+            description: descriptionFieldRef.current?.value ?? "",
+          });
+          fetchLists();
+        }
+      }
     } catch (error) {
-      alert("Error: Failed to create list");
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Error: Failed to create list");
+      }
     } finally {
       onClose();
     }
