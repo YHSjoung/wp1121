@@ -43,7 +43,7 @@ export default function NewListDialog({
           }
           await createList({
             name: titleFieldRef.current?.value ?? "",
-            picture: "../../pd.png",
+            picture: "http://localhost:8000/storePic/pd.png",
             description: descriptionFieldRef.current?.value ?? "",
           });
           fetchLists();
