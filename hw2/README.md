@@ -34,7 +34,7 @@ Start by copying the `storePic.example` folder to `storePic`
 
 ```bash
 cd backend
-cp storePic.example storePic
+cp -r storePic.example storePic
 ```
 
 ### 2. setup frontend `.env`
