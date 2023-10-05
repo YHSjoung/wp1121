@@ -91,6 +91,7 @@ function Playlist() {
 
   const handleDelete = async () => {
     try {
+      setOpenDeleteDialog(false);
       await deleteCard(isCheckedList);
       fetchCards();
     } catch (error) {
@@ -98,7 +99,6 @@ function Playlist() {
     } finally {
       setIsCheckedList([]);
       setChecked(false);
-      setOpenDeleteDialog(false);
     }
   };
 
@@ -172,6 +172,7 @@ function Playlist() {
     } finally {
       setEdittingDescription(false);
       setEdittingName(false);
+      fetchLists();
     }
   };
   const route = playList.picture;
@@ -286,11 +287,7 @@ function Playlist() {
           </div>
           <CheckAllorNotContext.Provider value={{ checked, setChecked }}>
             {playList.cards.map((card) => (
-              <Card
-                key={card.id}
-                {...card}
-                onToggle={(idd, iss) => handleToggle(idd, iss)}
-              />
+              <Card key={card.id} {...card} onToggle={handleToggle} />
             ))}
           </CheckAllorNotContext.Provider>
         </main>

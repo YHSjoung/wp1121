@@ -77,7 +77,13 @@ export default function CardDialog(props: CardDialogProps) {
     try {
       const list4UpdateSong = lists.find((list) => list.id === newListId);
       const songNameList = list4UpdateSong?.cards.map((card) => card.title);
-      if (songNameList?.includes(newTitle)) {
+      const theSameSongNameNum = songNameList?.filter(
+        (name) => name === newTitle,
+      ).length as number;
+      if (
+        (theSameSongNameNum > 0 && variant === "new") ||
+        (theSameSongNameNum > 1 && variant === "edit")
+      ) {
         throw new Error("There is already have the same song");
       }
       if (variant === "new") {
@@ -143,7 +149,6 @@ export default function CardDialog(props: CardDialogProps) {
           }
         }
       }
-      fetchCards();
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message);
@@ -152,6 +157,7 @@ export default function CardDialog(props: CardDialogProps) {
       }
     } finally {
       handleClose();
+      fetchCards();
     }
   };
 
