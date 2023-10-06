@@ -1,12 +1,14 @@
 # 112-1 Hw2 WP Music
 
-I have implemented three of the "perfect" requirements for this app.
+I have implemented fore of the "perfect" requirements for this app.
 
 First, a warning will pop up if you fail to update the list or card. If you forget to enter the "Name" of a list or leave it blank, a message will appear saying, "Please enter the list name." The same goes for the card.
 
 Second, the app checks whether a list or card with the same name already exists when you add a new one. If you use a duplicate name, a warning will pop up.
 
-Third, you can also change the cover image of each music list. This was the most challenging part of the homework for me, and I suggest you try it at least once!
+Third, the app supports the search function. You can type the song name you want in the search box, and the list containing that song will appear. If you want to see all the lists, please click "My Playlist." This will function like many other apps, taking you to a page displaying all your lists.
+
+Forth, you can also change the cover image of each music list. This was the most challenging part of the homework for me, and I suggest you try it at least once!
 
 To set up the app, please follow the steps below. Note that you must delete all of your data in your MongoDB to prevent any format errors! Have a great day!
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useReducer } from "react";
 
 import Button from "@mui/material/Button";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
@@ -13,6 +13,8 @@ import Typography from "@mui/material/Typography";
 
 import useCards from "@/hooks/useCards";
 import { createCard, updateCard } from "@/utils/client";
+
+import type { CardProps } from "./Card";
 
 // this pattern is called discriminated type unions
 // you can read more about it here: https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions
@@ -37,6 +39,17 @@ type EditCardDialogProps = {
 
 type CardDialogProps = NewCardDialogProps | EditCardDialogProps;
 
+type ActionType = { type: "SET_CARD"; payload: Omit<CardProps, "id"> };
+
+const cardReducer = (state: Omit<CardProps, "id">, action: ActionType) => {
+  switch (action.type) {
+    case "SET_CARD":
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
 export default function CardDialog(props: CardDialogProps) {
   const { variant, open, onClose, listId } = props;
   const title = variant === "edit" ? props.title : "";
@@ -52,6 +65,13 @@ export default function CardDialog(props: CardDialogProps) {
   // using a state variable to store the value of the input, and update it on change is another way to get the value of a input
   // however, this method is not recommended for large forms, as it will cause a re-render on every change
   // you can read more about it here: https://react.dev/reference/react-dom/components/input#controlling-an-input-with-a-state-variable
+  const initCard: Omit<CardProps, "id"> = {
+    title: title,
+    description: description,
+    listId: listId,
+    link: link,
+  };
+
   const [newTitle, setNewTitle] = useState(title);
   const [newDescription, setNewDescription] = useState(description);
   const [newListId, setNewListId] = useState(listId);
@@ -59,13 +79,20 @@ export default function CardDialog(props: CardDialogProps) {
 
   const { lists, fetchCards } = useCards();
 
+  const [_card, dispatch] = useReducer(cardReducer, initCard);
+
   const handleClose = () => {
     onClose();
     if (variant === "edit") {
-      setNewTitle(title);
-      setNewDescription(description);
-      setNewListId(listId);
-      setNewLink(link);
+      dispatch({
+        type: "SET_CARD",
+        payload: {
+          title: newTitle,
+          description: newDescription,
+          listId: newListId,
+          link: newLink,
+        },
+      });
     } else {
       setNewTitle("");
       setNewDescription("");
@@ -75,7 +102,7 @@ export default function CardDialog(props: CardDialogProps) {
 
   const handleSave = async () => {
     try {
-      const list4UpdateSong = lists.find((list) => list.id === newListId);
+      const list4UpdateSong = lists.find((list) => list.id === listId);
       const songNameList = list4UpdateSong?.cards.map((card) => card.title);
       const theSameSongNameNum = songNameList?.filter(
         (name) => name === newTitle,
@@ -86,18 +113,28 @@ export default function CardDialog(props: CardDialogProps) {
       ) {
         throw new Error("There is already have the same song");
       }
-      if (variant === "new") {
-        if (!newTitle) {
-          throw new Error("Please enter the song name");
-        } else {
-          if (!newDescription) {
-            throw new Error("Please enter the singer");
-          } else {
-            if (!newLink) {
-              throw new Error("Please enter the link");
-            }
-          }
+      if (newListId !== listId) {
+        const list4UpdateSong = lists.find((list) => list.id === newListId);
+        const songNameList = list4UpdateSong?.cards.map((card) => card.title);
+        const theSameSongNameNum = songNameList?.filter(
+          (name) => name === newTitle,
+        ).length as number;
+        if (theSameSongNameNum > 0) {
+          throw new Error("There is already have the same song");
         }
+      }
+      if (!newTitle) {
+        throw new Error("Please enter the song name");
+      }
+
+      if (!newDescription) {
+        throw new Error("Please enter the singer");
+      }
+
+      if (!newLink) {
+        throw new Error("Please enter the link");
+      }
+      if (variant === "new") {
         await createCard({
           title: newTitle,
           description: newDescription,
@@ -105,17 +142,6 @@ export default function CardDialog(props: CardDialogProps) {
           link: newLink,
         });
       } else {
-        if (!newTitle) {
-          throw new Error("Please enter the song name");
-        } else {
-          if (!newDescription) {
-            throw new Error("Please enter the singer");
-          } else {
-            if (!newLink) {
-              throw new Error("Please enter the link");
-            }
-          }
-        }
         if (
           newTitle === title &&
           newDescription === description &&
@@ -174,7 +200,7 @@ export default function CardDialog(props: CardDialogProps) {
           >
             <Input
               autoFocus
-              defaultValue={title}
+              defaultValue={_card.title}
               onChange={(e) => setNewTitle(e.target.value)}
               className="grow"
               placeholder="Enter the song name..."

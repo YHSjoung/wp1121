@@ -46,7 +46,6 @@ export default function NewListDialog({
             picture: "http://localhost:8000/storePic/pd.png",
             description: descriptionFieldRef.current?.value ?? "",
           });
-          fetchLists();
         }
       }
     } catch (error) {
@@ -57,6 +56,7 @@ export default function NewListDialog({
       }
     } finally {
       onClose();
+      fetchLists();
     }
   };
 

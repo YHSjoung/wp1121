@@ -22,11 +22,6 @@ export const PlayListReducer = (state: CardListProps, action: ActionType) => {
         ...state,
         description: action.payload,
       };
-    case "ADD_CARD_2_PLAYLIST":
-      return {
-        ...state,
-        cards: action.payload,
-      };
     case "UPDATE_PICTURE":
       return {
         ...state,

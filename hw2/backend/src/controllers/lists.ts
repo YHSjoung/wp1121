@@ -168,11 +168,9 @@ export const storePicture = async (req: Request, res: Response) => {
         return res.status(400).json({ error: "No file upload." });
       }
 
-      return res
-        .status(200)
-        .json({
-          imageUrl: `http://localhost:8000/storePic/${req.file.filename}`,
-        });
+      return res.status(200).json({
+        imageUrl: `http://localhost:8000/storePic/${req.file.filename}`,
+      });
     });
   } catch (error) {
     genericErrorHandler(error, res);

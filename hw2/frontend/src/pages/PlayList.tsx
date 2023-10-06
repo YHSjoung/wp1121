@@ -104,64 +104,73 @@ function Playlist() {
 
   const handleUpdateList = async () => {
     try {
+      // update Name without Name
       if (!nameInputRef.current?.value && edittingName) {
         throw new Error("Please enter the list name");
       }
+      // update Description without Description
       if (!descriptionInputRef.current?.value && edittingDescription) {
         throw new Error("Please enter the list description");
-      }
-      if (
-        !nameInputRef.current?.value &&
-        !descriptionInputRef.current?.value &&
-        pictureInputRef.current &&
-        !pictureInputRef.current.files?.length
-      ) {
-        return;
-      }
-      if (
-        !pictureInputRef.current?.files ||
-        !pictureInputRef.current.files?.length
-      ) {
-        return;
       }
 
       const newDescription =
         descriptionInputRef.current?.value || playList.description;
       const newName = nameInputRef.current?.value || playList.name;
+
       if (
-        newDescription === playList.description &&
-        newName === playList.name &&
+        !pictureInputRef.current ||
+        !pictureInputRef.current?.files ||
         !pictureInputRef.current.files?.length
       ) {
-        return;
-      }
+        if (
+          newDescription === playList.description &&
+          newName === playList.name
+        ) {
+          return;
+        } else {
+          try {
+            await updateList(confirmedId, {
+              description: newDescription,
+              name: newName,
+              picture: playList.picture,
+            });
+            dispatch({
+              type: "UPDATE_LISTDESCRIPTION",
+              payload: newDescription,
+            });
+            dispatch({ type: "UPDATE_LISTNAME", payload: newName });
+          } catch (error) {
+            alert("Error: Failed to update list name");
+          }
+        }
+      } else {
+        const formData = new FormData();
+        const reader = new FileReader();
+        const file = pictureInputRef.current.files[0];
+        let newPicture: string = "";
 
-      const formData = new FormData();
-      const reader = new FileReader();
-      const file = pictureInputRef.current?.files[0];
-      let newPicture: string = "";
+        reader.onload = () => {
+          const result = reader.result as string;
+          dispatch({ type: "UPDATE_PICTURE", payload: result });
+        };
+        reader.readAsDataURL(file);
 
-      reader.onload = () => {
-        const result = reader.result as string;
-        dispatch({ type: "UPDATE_PICTURE", payload: result });
-      };
-      reader.readAsDataURL(file);
-
-      if (file) {
-        formData.append("picture", file);
-        const response = await storePicture(formData);
-        newPicture = response.data.imageUrl;
-      }
-      try {
-        await updateList(confirmedId, {
-          description: newDescription,
-          name: newName,
-          picture: newPicture,
-        });
-        dispatch({ type: "UPDATE_LISTDESCRIPTION", payload: newDescription });
-        dispatch({ type: "UPDATE_LISTNAME", payload: newName });
-      } catch (error) {
-        alert("Error: Failed to update list name");
+        if (file) {
+          formData.append("picture", file);
+          const response = await storePicture(formData);
+          newPicture = response.data.imageUrl;
+        }
+        try {
+          await updateList(confirmedId, {
+            description: newDescription,
+            name: newName,
+            picture: newPicture,
+          });
+          dispatch({ type: "UPDATE_LISTDESCRIPTION", payload: newDescription });
+          dispatch({ type: "UPDATE_LISTNAME", payload: newName });
+        } catch (error) {
+          alert("Error: Failed to update list name");
+        }
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -175,7 +184,7 @@ function Playlist() {
       fetchLists();
     }
   };
-  const route = playList.picture;
+
   return (
     <>
       <div className="flex flex-col px-20 py-5">
@@ -190,7 +199,7 @@ function Playlist() {
                 onChange={handleUpdateList}
               />
               <img
-                src={route}
+                src={playList.picture}
                 alt="coverImage"
                 className="rounded"
                 onClick={() => {
