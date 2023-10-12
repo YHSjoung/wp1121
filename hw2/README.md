@@ -1,6 +1,6 @@
 # 112-1 Hw2 WP Music
 
-I have implemented fore of the "perfect" requirements for this app.
+I have implemented four of the "perfect" requirements for this app.
 
 First, a warning will pop up if you fail to update the list or card. If you forget to enter the "Name" of a list or leave it blank, a message will appear saying, "Please enter the list name." The same goes for the card.
 
