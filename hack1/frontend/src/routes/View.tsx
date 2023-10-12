@@ -11,14 +11,18 @@ const View = (): React.ReactNode => {
   /* (1/3) TODO 2.2: Navigation with `ViewFooter` Buttons (8%) */
   /* Hint 2.2.1: Link page index to React state */
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
-  const post = getPostByIndex(0);
+  const post = getPostByIndex(selectedIndex);
   /* End (1/3) TODO 2.2 */
 
   /* (3/3) TODO 2.2: Navigation with `ViewFooter` Buttons (8%) */
   /* Hint 2.2.4: Finish next and prev click Handler */
   /* Hint 2.2.5: Refer to `PostContext` for more clue */
-  const handleNextClick = useCallback(() => {}, []);
-  const handlePrevClick = useCallback(() => {}, []);
+  const handleNextClick = useCallback(() => {setSelectedIndex(selectedIndex + 1)}, [selectedIndex]);
+  const handlePrevClick = useCallback(() => {setSelectedIndex(selectedIndex - 1)}, [selectedIndex]);
+
+  useEffect(() => {
+    console.log(selectedIndex);
+  }, [selectedIndex])
   /* End (3/3) TODO 2.2 */
 
   /* (1/3) TODO 2.4: Handle Voting for Unvoted Posts (8%) */
@@ -57,7 +61,7 @@ const View = (): React.ReactNode => {
       {/* TODO 2.1: Render Post With `PostCard` and `PostContext` (3%) */}
       {/* Hint 2.1.1: Pass correct arguments to `PostCard` component */}
       {/* Hint 2.1.2: Arguments `post` should be Modified */}
-      <PostCard post={null} />
+      <PostCard post={post} />
       {/* End TODO 2.1 */}
 
       <div className="mt-auto">
@@ -72,8 +76,8 @@ const View = (): React.ReactNode => {
           upvoteClickHandler={() => {}}
           hasDownvoted={false}
           hasUpvoted={false}
-          nextClickHandler={() => {}}
-          prevClickHandler={() => {}}
+          nextClickHandler={() => {handleNextClick()}}
+          prevClickHandler={() => {handlePrevClick()}}
           totalVotes={0}
           loading={false}
         />

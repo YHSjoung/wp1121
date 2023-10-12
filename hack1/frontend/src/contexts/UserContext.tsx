@@ -3,6 +3,7 @@ import {
   useContext,
   useState,
   type PropsWithChildren,
+  useEffect,
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { User } from '@shared/types';
@@ -38,6 +39,11 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
   /* Reference: https://reactrouter.com/en/6.16.0/hooks/use-navigate */
   /*            https://reactrouter.com/en/6.16.0/hooks/use-location */
   /*            https://github.com/remix-run/history/blob/main/docs/api-reference.md#location */
+  useEffect(() => {
+    if (!authenticated) {
+      navigate("/login");
+    }
+  },[authenticated, navigate])
 
   /* Reminder: Don't import this useEffect hook if you are tired of being redirected to the login page. */
   /* Warning: But remember to add it back before submitting your work. */

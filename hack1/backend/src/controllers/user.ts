@@ -1,7 +1,7 @@
 import { User, Users } from '@shared/types';
 import { Request, Response } from 'express';
 import { Schema } from 'mongoose';
-import { ErrorResponse, asyncWrapper } from '@/error';
+import { ErrorResponse, asyncWrapper, errorHandler } from '@/error';
 import UserModel from '@/models/user';
 
 /**
@@ -32,7 +32,15 @@ export const createUser = asyncWrapper(
     /* TODO 1.5: Ensure User Registration Functions Properly (8%) */
     /* Create new user using `UserModel` */
     /* Return 201 with new user */
-    throw new Error('`createUser` Not Implemented');
+      const {username, password} = req.body;
+    
+      const user = await UserModel.create({
+        username,
+        password,
+      });
+  
+      return res.status(201).json(user);
+    // throw new Error('`createUser` Not Implemented');
     /* End of TODO 1.5 */
   },
 );
