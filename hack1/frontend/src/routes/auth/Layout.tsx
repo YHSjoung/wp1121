@@ -44,7 +44,7 @@ const AuthLayout = () => {
       // login('test', '123');
       /* Warning: Remember to change it back if you want to test the login functionality. */
     } else {
-      /* TODO 1.5: Ensure User Registration Functions Properly (8%) */
+      /* : Ensure User Registration Functions Properly (8%) */
       /* If the user is registering, you need to check if the passwords match. */
       /* If the passwords do not match, you should show a toast with */
       /* description "Passwords do not match" */
