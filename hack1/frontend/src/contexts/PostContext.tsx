@@ -79,8 +79,24 @@ export const PostsProvider = ({ children }: PropsWithChildren) => {
     if (posts === null || user === null) return;
     if (vote === 'upvote') {
       // handle upvotes
+      if (posts[index].upvotes.includes(userId)){
+        return;
+      }
+      if (posts[index].downvotes.includes(userId)) {
+        undoDownvotePost(index, userId);
+      } else {
+        upvotePost(index, userId);
+      }
     } else if (vote === 'downvote') {
       // handle downvotes
+      if (posts[index].downvotes.includes(userId)) {
+        return;
+      }
+      if (posts[index].upvotes.includes(userId)) {
+        undoUpvotePost(index, userId);
+      } else {
+        downvotePost(index, userId);
+      }
     }
   };
 

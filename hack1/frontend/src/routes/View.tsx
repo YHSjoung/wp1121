@@ -6,7 +6,7 @@ import { useUser } from '@/contexts/UserContext';
 
 const View = (): React.ReactNode => {
   const { user } = useUser();
-  const { getPostByIndex, votePost } = usePost();
+  const { getPostByIndex, votePost , numPosts} = usePost();
 
   /* (1/3) TODO 2.2: Navigation with `ViewFooter` Buttons (8%) */
   /* Hint 2.2.1: Link page index to React state */
@@ -18,14 +18,14 @@ const View = (): React.ReactNode => {
   /* Hint 2.2.4: Finish next and prev click Handler */
   /* Hint 2.2.5: Refer to `PostContext` for more clue */
   const handleNextClick = useCallback(() => {
-    if (selectedIndex === 1) {
+    if (selectedIndex === numPosts - 1) {
       setSelectedIndex(0);
     } else {
       setSelectedIndex(selectedIndex + 1);
     }}, [selectedIndex]);
   const handlePrevClick = useCallback(() => {
     if (selectedIndex === 0) {
-      setSelectedIndex(1);
+      setSelectedIndex(numPosts);
     } else {
       setSelectedIndex(selectedIndex - 1)
     }}, [selectedIndex]);
@@ -34,14 +34,16 @@ const View = (): React.ReactNode => {
   /* (1/3) TODO 2.4: Handle Voting for Unvoted Posts (8%) */
   /* Hint 2.4.1: Determine if the current user has upvoted or downvoted the selected post */
   /* Hint 2.4.2: Refer to the schema of `Post` for more clue */
-  const hasUpvoted = user && post?.upvotes.includes(user.username);
-  const hasDownvoted = user && post?.downvotes.includes(user.username);
+  const hasUpvoted = Boolean(user && post?.upvotes.includes(user._id));
+  const hasDownvoted = Boolean(user && post?.downvotes.includes(user._id));
   /* End (1/3) TODO 2.4 */
 
   /* (2/3) TODO 2.4: Handle Voting for Unvoted Posts (8%) */
   const handleVoteClick = (vote: 'upvote' | 'downvote') => {
     if (post === null || user === null) return false;
-
+    votePost(selectedIndex, user._id, vote );
+    console.log(hasUpvoted);
+    console.log(hasDownvoted);
     /* Hint 2.4.3: Call some exported function from `PostContext` */
   };
   /* End of (2/3) TODO 2.4 */
@@ -80,13 +82,13 @@ const View = (): React.ReactNode => {
         {/* Hint 2.2.3: Arguments `nextClickHandler` and `prevClickHandler` should be modified */}
         {/* Hint 2.4.5: Arguments `downvoteClickHandler`, `upvoteClickHandler`, `hasUpvoted`, `hasDownvoted` and `totalVotes` should be Modified */}
         <ViewFooter
-          downvoteClickHandler={() => {}}
-          upvoteClickHandler={() => {}}
-          hasDownvoted={false}
-          hasUpvoted={false}
+          downvoteClickHandler={() => {handleVoteClick("downvote")}}
+          upvoteClickHandler={() => {handleVoteClick("upvote")}}
+          hasDownvoted={hasDownvoted}
+          hasUpvoted={hasUpvoted}
           nextClickHandler={() => {handleNextClick()}}
           prevClickHandler={() => {handlePrevClick()}}
-          totalVotes={0}
+          totalVotes={(post.upvotes.length) - (post.downvotes.length)}
           loading={false}
         />
         {/* End (3/3) TODO 2.4 */}

@@ -33,6 +33,7 @@ const Create = (): React.ReactNode => {
     e.preventDefault();
     if (selectedIndex === -1) {
       // create new post
+      createPost(title, code);
       setSelectedIndex(numPosts);
       toast({
         description: 'File Created Successfully',
@@ -119,8 +120,8 @@ const Create = (): React.ReactNode => {
           {/* Hint 3.1.1: Argument `onChange` and `value of `Input` component should be modified */}
           <Input
             type="text"
-            value={'hello.js'}
-            onChange={(e) => console.log(e.target.value)}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             id="title"
             placeholder="File name"
             className="h-9 rounded-[2px] border-background p-2.5 focus-visible:border-button focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -141,7 +142,7 @@ const Create = (): React.ReactNode => {
             theme="vs-dark"
             value={code}
             onChange={(newValue) => {
-              console.log('[Manaco Editor] New value:\n', newValue);
+              setCode(newValue || "");
             }}
             loading={
               <div className="flex items-center justify-center gap-2">
