@@ -29,7 +29,7 @@ function ChatRoomMessages() {
         </nav>
         {annMes && (
           <div className="w-full p-2">
-            <div className="flex justify-between border border-black-500 border-bold p-2 rounded-xl bg-white">
+            <div className="flex justify-between border border-black-500 border-bold px-6 py-2 rounded-xl bg-white">
               <p className="font-bold">Announced Mes !</p>
               {annMes}
             </div>
