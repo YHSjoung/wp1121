@@ -57,7 +57,7 @@ export default function ChatRoom({
         <>
           <button
             onClick={() => {
-              if (chatRoom?.chatRoomDisplayId === displayId) return;
+              if( chatRoom?.chatRoomDisplayId === displayId ) return;
               socket?.emit("left_room", chatRoom?.chatRoomDisplayId);
               setChatRoom({
                 chatRoomName: name,

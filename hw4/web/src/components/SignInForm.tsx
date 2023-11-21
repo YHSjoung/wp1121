@@ -83,6 +83,7 @@ function SignInForm() {
         ) : (
           <p className="text-sm text-gray-400 font-light text-clip">
             {`Enter your Name and password to sign up.
+            \n
             Your password has to more than 8 character`}
           </p>
         )}
