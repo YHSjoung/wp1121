@@ -27,11 +27,7 @@ export default async function middleware(req: NextRequest) {
         },
       );
     }
-    // const verified = jwt.verify(token, env.NEXT_PUBLIC_JWT_SECRET!);
-    // console.log("verified", verified);
-    // const user = (verified as { user: User}).user;
-    // console.log(user)
-    // req.user = user;
+
     return NextResponse.next();
   } catch (error) {
     console.error(error);
