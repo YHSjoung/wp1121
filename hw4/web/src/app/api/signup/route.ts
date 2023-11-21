@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     const token = jwt.sign(
       {
-        userDisplay: user.displayId,
+        userDisplayId: user.displayId,
       },
       env.NEXT_PUBLIC_JWT_SECRET,
       {

@@ -82,7 +82,9 @@ function SignInForm() {
           </p>
         ) : (
           <p className="text-sm text-gray-400 font-light text-clip">
-            Enter your Name and password to sign up.
+            {`Enter your Name and password to sign up.
+            \n
+            Your password has to more than 8 character`}
           </p>
         )}
       </div>
@@ -99,6 +101,7 @@ function SignInForm() {
           // id="displayId"
           ref={nameRef}
           required
+          placeholder="Your Name"
         />
       </div>
       <div className="grid grid-cols-4 gap-4 items-center">
@@ -114,6 +117,7 @@ function SignInForm() {
           // id="displayId"
           ref={passwordRef}
           required
+          placeholder="Must more than 8 character"
         />
       </div>
       {!isSignIn && (
@@ -130,6 +134,7 @@ function SignInForm() {
             id="displayId"
             ref={comfirmPasswordRef}
             required
+            placeholder="Must more than 8 character"
           />
         </div>
       )}

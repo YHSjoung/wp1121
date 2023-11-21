@@ -28,13 +28,17 @@ export const chatRoomsTable = pgTable(
     id: serial("id").primaryKey(),
     displayId: uuid("chatRoom_display_id").defaultRandom().notNull().unique(),
     announcMesContent: varchar("announced_mes_content"),
-    lastMesContent: varchar("last_mes_content").notNull(),
-    lastMesId: uuid("last_mes_id"),
+    lastMesSender: varchar("last_mes_sender"),
+    lastMesContent: varchar("last_mes_content"),
+    lastTime: timestamp("last_time")
+      .default(sql`now()`)
+      .notNull(),
   },
   (table) => ({
     displayIndex: index("chatRoom_display_id_index").on(table.displayId),
     announcedIndex: index("announce_mes_index").on(table.announcMesContent),
-    lastMesIdIndex: index("last_mes_id_index").on(table.lastMesId),
+    lastTimeIndex: index("last_time_index").on(table.lastTime),
+    lastMesSenderIndes: index("last_mes_sender_index").on(table.lastMesSender),
     lastMesContentIndex: index("last_mes_content_index").on(
       table.lastMesContent,
     ),
@@ -84,5 +88,22 @@ export const messagesTable = pgTable(
     chatRoomIndex: index("mes_chatRoom_display_id_index").on(
       table.chatRoomDisplayId,
     ),
+  }),
+);
+
+export const removeMessageTable = pgTable(
+  "removeMessage",
+  {
+    id: serial("id").notNull().primaryKey(),
+    removeUserDisplayId: uuid("rm_user_display_id").references(
+      () => usersTable.displayId,
+    ),
+    removeMessageDisplayId: uuid("rm_mes_display_id").references(
+      () => messagesTable.displayId,
+      { onDelete: "cascade" },
+    ),
+  },
+  (table) => ({
+    idIndex: index("re_id_index").on(table.id),
   }),
 );

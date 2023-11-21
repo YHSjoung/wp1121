@@ -4,7 +4,7 @@ import { db } from "@/db";
 import jwt from "jsonwebtoken";
 import { env } from "@/lib/env";
 import type { User } from "@/package/types/user";
-import { chatRoomsTable, messagesTable } from "@/db/schema";
+import { chatRoomsTable, messagesTable, removeMessageTable } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
 const DeleteMessageSchema = z.object({
@@ -12,6 +12,11 @@ const DeleteMessageSchema = z.object({
   chatRoomDisplayID: z.string().min(1).max(50),
 });
 type DeleteMessageRequest = z.infer<typeof DeleteMessageSchema>;
+
+const RemoveMessageSchema = z.object({
+  messageDisplayId: z.string().min(1).max(50),
+});
+type RemoveMessageRequest = z.infer<typeof RemoveMessageSchema>;
 
 const postMessageSchema = z.object({
   content: z.string().min(1).max(500),
@@ -26,7 +31,8 @@ export async function GET(request: NextRequest) {
   const token = request.headers.get("authorization")?.split(" ")[1];
   const verified = jwt.verify(token!, env.NEXT_PUBLIC_JWT_SECRET!);
   console.log("verified", verified);
-  // const userDisplayId = (verified as { userDisplayId: User["displayId"]}).userDisplayId;
+  const userDisplayId = (verified as { userDisplayId: User["displayId"] })
+    .userDisplayId;
 
   const chatRoomMes = await db
     .select({
@@ -40,9 +46,18 @@ export async function GET(request: NextRequest) {
     .orderBy(messagesTable.createdAt)
     .execute();
 
+  const removeMessages = await db
+    .select({
+      removeMessageDisplayId: removeMessageTable.removeMessageDisplayId,
+    })
+    .from(removeMessageTable)
+    .where(eq(removeMessageTable.removeUserDisplayId, userDisplayId))
+    .execute();
+  console.log(removeMessages);
   return NextResponse.json(
     {
       messages: chatRoomMes,
+      removeMessages: removeMessages,
     },
     { status: 200 },
   );
@@ -75,23 +90,18 @@ export async function POST(request: NextRequest) {
       })
       .returning()
       .execute();
-    console.log("Y");
 
     await db
-      .insert(chatRoomsTable)
-      .values({
+      .update(chatRoomsTable)
+      .set({
         displayId: chatRoomId,
         lastMesContent: content,
-        lastMesId: res[0].displayId,
+        lastMesSender: senderName,
+        lastTime: res[0].createdAt!,
       })
-      .onConflictDoUpdate({
-        target: chatRoomsTable.displayId,
-        set: {
-          lastMesContent: content,
-          lastMesId: res[0].displayId,
-        },
-      })
+      .where(eq(chatRoomsTable.displayId, chatRoomId))
       .execute();
+
     return NextResponse.json(
       {
         message: {
@@ -99,6 +109,9 @@ export async function POST(request: NextRequest) {
           content: res[0].content,
           senderName: res[0].senderName,
           createdAt: res[0].createdAt,
+        },
+        chatRoomId: {
+          chatRoomDisplayId: res[0].chatRoomDisplayId,
         },
       },
       { status: 200 },
@@ -138,6 +151,7 @@ export async function DELETE(request: NextRequest) {
       .select({
         lastMesDisplayId: messagesTable.displayId,
         lastMesContent: messagesTable.content,
+        lastMesSender: messagesTable.senderName,
       })
       .from(messagesTable)
       .where(eq(messagesTable.chatRoomDisplayId, chatRoomDisplayID))
@@ -146,20 +160,57 @@ export async function DELETE(request: NextRequest) {
       .execute();
 
     await db
-      .insert(chatRoomsTable)
-      .values({
+      .update(chatRoomsTable)
+      .set({
         displayId: chatRoomDisplayID,
         lastMesContent: latestMesSub.lastMesContent,
-        lastMesId: latestMesSub.lastMesDisplayId,
+        lastMesSender: latestMesSub.lastMesSender,
       })
-      .onConflictDoUpdate({
-        target: chatRoomsTable.displayId,
-        set: {
-          lastMesContent: latestMesSub.lastMesContent,
-          lastMesId: latestMesSub.lastMesDisplayId,
-        },
+      .where(eq(chatRoomsTable.displayId, chatRoomDisplayID))
+      .execute();
+
+    return NextResponse.json(
+      {
+        message: "OK",
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  const data = await request.json();
+  console.log(data);
+  const token = request.headers.get("authorization")?.split(" ")[1];
+  const verified = jwt.verify(token!, env.NEXT_PUBLIC_JWT_SECRET!);
+  console.log("verified", verified);
+  const userDisplayId = (verified as { userDisplayId: User["displayId"] })
+    .userDisplayId;
+  console.log(userDisplayId);
+
+  try {
+    RemoveMessageSchema.parse(data);
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+
+  const { messageDisplayId } = data as RemoveMessageRequest;
+  console.log(messageDisplayId);
+
+  try {
+    await db
+      .insert(removeMessageTable)
+      .values({
+        removeUserDisplayId: userDisplayId,
+        removeMessageDisplayId: messageDisplayId,
       })
       .execute();
+
     return NextResponse.json(
       {
         message: "OK",

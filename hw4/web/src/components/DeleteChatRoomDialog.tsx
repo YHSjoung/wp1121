@@ -7,8 +7,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useContext } from "react";
-import useChatRoom from "@/useHook/useChatRoom";
-import { useRouter } from "next/navigation";
 import { ChatRoomsContext } from "@/context/chatRoom";
 
 export default function DeleteChatRoomDialog({
@@ -20,18 +18,11 @@ export default function DeleteChatRoomDialog({
   setOpenD: (open: boolean) => void;
   displayId: string;
 }) {
-  const { deleteChatRoom } = useChatRoom();
-  const { chatRooms, setChatRooms } = useContext(ChatRoomsContext);
-  const router = useRouter();
+  const { deleteChatRoom } = useContext(ChatRoomsContext);
 
   const handleDelete = async () => {
-    const token = localStorage.getItem("jwt-token")!;
-    await deleteChatRoom({ chatRoomDisplayID: displayId, token });
-    setChatRooms(
-      chatRooms.filter((chatRoom) => chatRoom.displayId !== displayId),
-    );
+    deleteChatRoom({ chatRoomDisplayID: displayId });
     handleClose();
-    router.refresh();
   };
 
   const handleClose = () => {

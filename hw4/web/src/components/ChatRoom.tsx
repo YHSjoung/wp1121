@@ -12,6 +12,8 @@ type ChatRoomProps = {
   displayId: string | undefined;
   content: string | undefined;
   annMesContent: string | undefined;
+  onToggle?: () => void | undefined;
+  search?: boolean;
 };
 
 export default function ChatRoom({
@@ -20,16 +22,18 @@ export default function ChatRoom({
   displayId,
   content,
   annMesContent,
+  onToggle,
+  search,
 }: ChatRoomProps) {
   const [open, setOpen] = useState(false);
-  const { setChatRoom, setAnnMes, setChatRoomName } =
+  const { setChatRoom, setAnnMes, socket, chatRoom } =
     useContext(MessagesContext);
   const [openD, setOpenD] = useState(false);
 
   return (
     <>
       {!displayId ? (
-        <div className="w-full">
+        <>
           <button onClick={() => setOpen(true)}>
             <div className="break-word m-4 gap-2 whitespace-pre-wrap border px-2 rounded-md">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -41,21 +45,28 @@ export default function ChatRoom({
               <article className="flex w-4/5 grow flex-col whitespace-pre-wrap my-1 gap-2 w-full">
                 <p className="font-bold text-xl">{name}</p>
                 {/* `white-space: pre-wrap` tells html to render \n and \t chracters  */}
-                <p className="mt-1 whitespace-pre-wrap break-words text-gray-500">
+                <article className="mt-1 whitespace-pre-wrap break-words text-gray-500">
                   Haven't had a chat room with
-                </p>
+                </article>
               </article>
             </div>
           </button>
           <HaveNotHadRoomDialog open={open} setOpen={setOpen} />
-        </div>
+        </>
       ) : (
         <>
           <button
             onClick={() => {
-              setChatRoom(displayId);
+              socket?.emit("left_room", chatRoom?.chatRoomDisplayId);
+              setChatRoom({
+                chatRoomName: name,
+                chatRoomDisplayId: displayId,
+                annMesContent,
+              });
               setAnnMes(annMesContent!);
-              setChatRoomName(name);
+              {
+                search && onToggle!();
+              }
             }}
             onContextMenu={(e) => {
               e.preventDefault();

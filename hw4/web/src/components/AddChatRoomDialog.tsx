@@ -11,7 +11,6 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { useRef, useState, useContext } from "react";
 import { cn } from "@/lib/utils";
-import useChatRoom from "@/useHook/useChatRoom";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChatRoomsContext } from "@/context/chatRoom";
 import { MessagesContext } from "@/context/message";
@@ -24,17 +23,19 @@ export default function AddChatRoomDialog({
   setOpen: (open: boolean) => void;
 }) {
   const usernameInputRef = useRef<HTMLInputElement>(null);
-  const { buildChatRoom } = useChatRoom();
   const [isEmpty, setIsEnpty] = useState(false);
   const [isYou, setIsYou] = useState(false);
   const [alreadyHad, setAlreadyHad] = useState(false);
-  const { chatRooms, setChatRooms } = useContext(ChatRoomsContext);
-  const { setChatRoom } = useContext(MessagesContext);
+  const { buildChatRoom } = useContext(ChatRoomsContext);
+  const { setChatRoom, setAnnMes } = useContext(MessagesContext);
   const router = useRouter();
   const searchParams = useSearchParams();
   const userName = searchParams.toString().split("=")[1];
 
   const handleBuild = async () => {
+    setIsEnpty(false);
+    setIsYou(false);
+    setAlreadyHad(false);
     if (!usernameInputRef.current?.value) {
       setIsEnpty(true);
       return;
@@ -43,29 +44,13 @@ export default function AddChatRoomDialog({
       setIsYou(true);
       return;
     }
-    const token = localStorage.getItem("jwt-token")!;
     const res = await buildChatRoom({
       name: usernameInputRef.current.value,
-      token,
     });
-    console.log(res);
-    const chatRoomDisplayID = res;
-    if (!chatRoomDisplayID) {
-      setAlreadyHad(true);
-      return;
-    } else {
-      console.log(chatRoomDisplayID);
-      const newChatRoom = {
-        displayId: chatRoomDisplayID,
-        name: usernameInputRef.current.value,
-        senderName: undefined,
-        content: undefined,
-      };
-      setChatRooms([...chatRooms, newChatRoom]);
-      setChatRoom(chatRoomDisplayID);
-      handleClose();
-      router.refresh();
-    }
+    setChatRoom(res!);
+    setAnnMes(undefined);
+    handleClose();
+    router.refresh();
   };
 
   const handleClose = () => {

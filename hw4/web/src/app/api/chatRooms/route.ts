@@ -3,12 +3,7 @@ import type { NextRequest } from "next/server";
 import { eq, desc, ilike, and, ne } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import {
-  usersTable,
-  chatRoomsTable,
-  messagesTable,
-  chatRoomMembersTable,
-} from "@/db/schema";
+import { usersTable, chatRoomsTable, chatRoomMembersTable } from "@/db/schema";
 import type { User } from "@/package/types/user";
 import { env } from "@/lib/env";
 import jwt from "jsonwebtoken";
@@ -68,7 +63,7 @@ export async function GET(request: NextRequest) {
       ),
   );
 
-  const objectNameSub = db.$with("object_name").as(
+  const objectSubquery = db.$with("object_name").as(
     db
       .with(objectDisplayIdSubquery)
       .select({
@@ -87,84 +82,42 @@ export async function GET(request: NextRequest) {
       ),
   );
 
-  const lastMesSubquery = db.$with("last_mes").as(
-    db
-      .with(chatRoomsIdSubquery)
-      .select({
-        lastMesDisplayId: chatRoomsTable.lastMesId,
-        lastMesChatRoomsDisplayId: chatRoomsTable.displayId,
-        lastMesContent: chatRoomsTable.lastMesContent,
-        annMesContent: chatRoomsTable.announcMesContent,
-      })
-      .from(chatRoomsTable)
-      .innerJoin(
-        chatRoomsIdSubquery,
-        eq(chatRoomsTable.displayId, chatRoomsIdSubquery.chatRoomsDisplayId),
-      ),
-  );
-
-  const completeLastMesSubquery = db.$with("completed_las_mes").as(
-    db
-      .with(lastMesSubquery, objectNameSub)
-      .select({
-        lasMesChatRoomDisplayId: lastMesSubquery.lastMesChatRoomsDisplayId,
-        name: objectNameSub.chatRoomObjectName,
-        senderName: messagesTable.senderName,
-        createdAt: messagesTable.createdAt,
-      })
-      .from(messagesTable)
-      .innerJoin(
-        lastMesSubquery,
-        eq(messagesTable.displayId, lastMesSubquery.lastMesDisplayId),
-      )
-      .innerJoin(
-        objectNameSub,
-        eq(messagesTable.chatRoomDisplayId, objectNameSub.chatRoomDisplayId),
-      ),
-  );
-
-  const completeLastMesSubquer = await db
-    .with(lastMesSubquery, objectNameSub)
+  const objectSubquesry = await db
+    .with(objectDisplayIdSubquery)
     .select({
-      lasMesChatRoomDisplayId: lastMesSubquery.lastMesChatRoomsDisplayId,
-      name: objectNameSub.chatRoomObjectName,
-      senderName: messagesTable.senderName,
-      createdAt: messagesTable.createdAt,
+      chatRoomObjectName: usersTable.name,
+      chatRoomObjectDisplayId: objectDisplayIdSubquery.chatRoomObjectDisplayId,
+      chatRoomDisplayId: objectDisplayIdSubquery.chatRoomDisplayId,
     })
-    .from(messagesTable)
+    .from(usersTable)
     .innerJoin(
-      lastMesSubquery,
-      eq(messagesTable.displayId, lastMesSubquery.lastMesDisplayId),
-    )
-    .innerJoin(
-      objectNameSub,
-      eq(messagesTable.chatRoomDisplayId, objectNameSub.chatRoomDisplayId),
+      objectDisplayIdSubquery,
+      eq(objectDisplayIdSubquery.chatRoomObjectDisplayId, usersTable.displayId),
     )
     .execute();
+  console.log(objectSubquesry);
 
-  console.log(completeLastMesSubquer);
   const chatRoomsQuery = db
-    .with(lastMesSubquery, completeLastMesSubquery)
+    .with(objectSubquery)
     .select({
-      displayId: lastMesSubquery.lastMesChatRoomsDisplayId,
-      name: completeLastMesSubquery.name,
-      senderName: completeLastMesSubquery.senderName,
-      content: lastMesSubquery.lastMesContent,
-      createdAt: completeLastMesSubquery.createdAt,
-      annMesContent: lastMesSubquery.annMesContent,
+      chatRoomName: objectSubquery.chatRoomObjectName,
+      chatRoomDisplayId: chatRoomsTable.displayId,
+      lastMesContent: chatRoomsTable.lastMesContent,
+      lastMesSender: chatRoomsTable.lastMesSender,
+      annMesContent: chatRoomsTable.announcMesContent,
+      lastTime: chatRoomsTable.lastTime,
     })
-    .from(completeLastMesSubquery)
-    .orderBy(desc(completeLastMesSubquery.createdAt))
-    .rightJoin(
-      lastMesSubquery,
-      eq(
-        completeLastMesSubquery.lasMesChatRoomDisplayId,
-        lastMesSubquery.lastMesChatRoomsDisplayId,
-      ),
+    .from(chatRoomsTable)
+    .orderBy(desc(chatRoomsTable.lastTime))
+    .innerJoin(
+      objectSubquery,
+      eq(chatRoomsTable.displayId, objectSubquery.chatRoomDisplayId),
     );
 
   if (keyword !== null) {
-    chatRoomsQuery.where(ilike(completeLastMesSubquery.name, `%${keyword}%`));
+    chatRoomsQuery.where(
+      ilike(objectSubquery.chatRoomObjectName, `%${keyword}%`),
+    );
     const searchChatRooms = await db
       .select({
         userDisplayId: usersTable.displayId,
@@ -187,9 +140,7 @@ export async function GET(request: NextRequest) {
   }
 
   const chatRooms = await chatRoomsQuery.execute();
-  console.log("KKK");
   console.log(chatRooms);
-  console.log("jjj");
   return NextResponse.json(
     {
       chatRooms,
@@ -205,7 +156,6 @@ export async function POST(request: NextRequest) {
   const userDisplayId = (verified as { userDisplayId: User["displayId"] })
     .userDisplayId;
   console.log(userDisplayId);
-
   const data = await request.json();
   try {
     postChatRoomSchema.parse(data);
@@ -257,22 +207,13 @@ export async function POST(request: NextRequest) {
       )
       .execute();
 
-    // const chatRoomsNameSubquery = await db
-    //   .with(chatRoomsIdSubquery)
-    //   .select({
-    //     chatRoomName: chatRoomsTable.name,
-    //   })
-    //   .from(chatRoomsTable)
-    //   .innerJoin(chatRoomsIdSubquery,eq(chatRoomsTable.displayId,chatRoomsIdSubquery.chatRoomsDisplayId))
-    //   .execute();
-
     const chatRoomNameArray = objectName.map(
       (chatRoom) => chatRoom.chatRoomObjectName,
     );
     if (chatRoomNameArray.includes(name)) {
       return NextResponse.json(
         { message: "Already had the chat room", displayId: null },
-        { status: 200 },
+        { status: 500 },
       );
     }
 
@@ -285,6 +226,8 @@ export async function POST(request: NextRequest) {
       .execute();
 
     const chatRoomDisplayId = chatRoomResult[0].displayId;
+    const lastTime = chatRoomResult[0].lastTime;
+
     const objectDisplayId = await db
       .select({
         objectDisplayId: usersTable.displayId,
@@ -310,7 +253,11 @@ export async function POST(request: NextRequest) {
       .execute();
 
     return NextResponse.json(
-      { message: "OK", displayId: chatRoomDisplayId },
+      {
+        message: "OK",
+        chatRoomDisplayId: chatRoomDisplayId,
+        lastTime: lastTime,
+      },
       { status: 200 },
     );
   } catch (error) {
@@ -357,8 +304,7 @@ export async function DELETE(request: NextRequest) {
   const token = request.headers.get("authorization")?.split(" ")[1];
   const verified = jwt.verify(token!, env.NEXT_PUBLIC_JWT_SECRET!);
   console.log("verified", verified);
-  // const userDisplayId = (verified as { userDisplayId: User["displayId"]}).userDisplayId;
-  // console.log(userDisplayId);
+
   const data = await request.json();
   try {
     DeleteChatRoomSchema.parse(data);
@@ -366,6 +312,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
   const { chatRoomDisplayID } = data as DeleteChatRoomRequest;
+
   try {
     await db
       .delete(chatRoomsTable)

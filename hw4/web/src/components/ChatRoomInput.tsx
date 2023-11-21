@@ -16,8 +16,12 @@ function ChatRoomInput() {
     console.log(chatRoom);
     console.log("PP");
     if (!content) return;
-
-    sendMessage({ content, senderName: userName, chatRoomId: chatRoom! });
+    if (!chatRoom?.chatRoomDisplayId) return;
+    sendMessage({
+      content,
+      senderName: userName,
+      chatRoomId: chatRoom?.chatRoomDisplayId,
+    });
     setContent("");
   };
   return (
