@@ -7,7 +7,7 @@ import * as schema from "./schema";
 
 const client = new Client({
   // TODO: 1.1 Add your private environment variables here for your database (postgres)
-  connectionString: "<connection_string>", // change this line
+  connectionString: privateEnv.POSTGRES_URL, // change this line
   // TODO: 1.1 end
 
   connectionTimeoutMillis: 5000,

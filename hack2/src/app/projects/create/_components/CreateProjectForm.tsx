@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import type { Project } from "@/lib/types";
+import { publicEnv } from "@/lib/env/public";
 
 export default function CreateProjectForm() {
   const [projectName, setProjectName] = useState<Project["name"]>("");
@@ -31,7 +32,7 @@ export default function CreateProjectForm() {
 
       // TODO: 5. After creating a project, redirect to the project page
       // hint: Why are some variables unused?
-
+      router.push(`${publicEnv.NEXT_PUBLIC_BASE_URL}/projects/${newProject}`);
       // TODO: 5. end
     } catch (error) {
       if (error instanceof Error) {
